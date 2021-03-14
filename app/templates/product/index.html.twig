@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block body_id 'blog_index' %}
+
+
+{% block header %}
+    <header>
+        <div class="navbar navbar-default navbar-static-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header col-md-3 col-lg-2">
+                    <a class="navbar-brand" href="{{ path('product_index') }}">
+                        Maybe Website
+                    </a>
+
+                    <button type="button" class="navbar-toggle"
+                            data-toggle="collapse"
+                            data-target=".navbar-collapse">
+                        <span class="sr-only">Navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+
+                        {% block header_navigation_links %}
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li>
+                                    <a href="{{ path('admin_product_index') }}">
+                                        <i class="fa fa-lock" aria-hidden="true"></i> Admin
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endblock %}
+
+
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-expanded="false" id="categories">
+                                <i class="fa fa-bars" aria-hidden="true"></i>Categories
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu user" role="menu" aria-labelledby="categories">
+                            {% for category in categories %}
+                        <li>
+                            <a href="{{ path('category_search', {id: category.id}) }}">
+                                <i class="fa fa-cart"></i>{{ category.name }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                            </ul>>
+                        </li>
+
+                        <li>
+                            <a href="{{ path('product_search') }}"> <i class="fa fa-search"></i> Search</a>
+                        </li>
+
+                        <li>
+                            <a href="{{ path('cart') }}"> <i class="fa fa-shopping-cart"></i> Cart</a>
+                        </li>
+
+                        {% if app.user %}
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                   aria-expanded="false" id="user">
+                                    <i class="fa fa-user" aria-hidden="true"></i>{{ app.user.username }}
+                                    <span class="caret"></span>
+                                    <span class="sr-only">{{ app.user.email }}</span>
+                                </a>
+                                <ul class="dropdown-menu user" role="menu" aria-labelledby="user">
+                                    <li>
+                                        <a href="{{ path('user_edit') }}">
+                                            <i class="fa fa-edit" aria-hidden="true"></i> User
+                                        </a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a href={{ path('orderlist') }}>
+                                            <i class="fa fa-archive" aria-hidden="true"></i> Orders
+                                        </a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a href="{{ path('app_logout') }}">
+                                            <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="{{ path('app_login') }}">
+                                    <i class="fa fa-sign-in " aria-hidden="true"></i> Login
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+{% endblock %}
+
+{% block main %}
+    {% for product in products %}
+        <article class="well">
+            <h2>
+                <td><img src="/public/uploads/brochures/{{ product.image }}" style="width: 100px;"></td>
+                <a href="{{ path('product.detail', {slug: product.slug}) }}">
+                    {{ product.name }}
+                </a>
+                <br>
+                <i class="fa fa-money" aria-hidden="true">
+                    {{ product.price }}₽
+                </i>
+            </h2>
+
+            <p>{{ product.summary }}</p>
+            {{ include('product/_product_tags.html.twig') }}
+        </article>
+    {% else %}
+        <div class="well">no products found</div>
+    {% endfor %}
+
+    <div class="navigation text-center">
+        {{ knp_pagination_render(products) }}
+    </div>
+{% endblock %}
