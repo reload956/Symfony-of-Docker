@@ -29,6 +29,26 @@ const MaxPage=10;
 class ProductController extends AbstractController
 {
     /**
+     * @Route("/home")
+     * @param Request $request
+     * @param Category $category
+     * @return Response
+     */
+    public function initial(Request $request): Response
+    {
+            $em = $this->getDoctrine()->getManager();
+
+            $CategoryRepository = $em->getRepository(Category::class);
+            $category = $CategoryRepository->findAll();
+            $Products=[];
+            $CategoryRepository=$em->getRepository(Category::class);
+            $CategoryQuery=$CategoryRepository->findAll();
+
+            return $this->render('product/homepage.html.twig', [
+                'products' => $Products,'categories'=>$CategoryQuery]);
+    }
+
+    /**
      * @Route("/", defaults={"page": "1", "_format"="html"}, methods="GET", name="product_index")
      * @Route("/page/{page<[1-9]\d*>}", defaults={"_format"="html"}, methods="GET", name="product_index_paginated")
      * @Cache(smaxage="10")
